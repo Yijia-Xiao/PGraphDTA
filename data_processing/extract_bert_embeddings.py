@@ -1,20 +1,30 @@
 from transformers import BertModel, BertTokenizer
+from transformers import AutoTokenizer, EsmModel
 from tdc.multi_pred import DTI
 import torch
 import numpy as np
 from tqdm import tqdm
 import re
 import os
+import pudb
+import argparse
 
-prot_models = ["Rostlab/prot_bert", "yarongef/DistilProtBert"]
-model_choice = 0
+parser = argparse.ArgumentParser(description='Extract BERT embeddings for proteins')
+parser.add_argument('--model', type=int, default=0, help='0 for ProtBERT, 1 for DistilProtBERT, 2 for ESM-2')
+args = parser.parse_args()
+
+
+model_choice = args.model
+
+prot_models = ["Rostlab/prot_bert", "yarongef/DistilProtBert", "facebook/esm2_t33_650M_UR50D"]
+# model_choice = 1
 PROT_MODEL = prot_models[model_choice]
 
-model_names = ["ProtBERT", "DistilProtBERT"]
+model_names = ["ProtBERT", "DistilProtBERT", "ESM-2"]
 model_name = model_names[model_choice]
 
 datasets = ["DAVIS", "KIBA"]
-dataset_choice = 0
+dataset_choice = 1
 DATASET = datasets[dataset_choice]
 
 dataset = DTI(name = DATASET)
@@ -42,12 +52,17 @@ valid_targets = [preprocess_protein(valid_target) for valid_target in valid_targ
 test_targets = [preprocess_protein(test_target) for test_target in test_targets]
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+# device = torch.device("cpu")
 
-prot_tokenizer = BertTokenizer.from_pretrained(PROT_MODEL, do_lower_case=False)
-prot_model = BertModel.from_pretrained(PROT_MODEL)
+if model_choice == 2:
+    prot_tokenizer = AutoTokenizer.from_pretrained(PROT_MODEL, do_lower_case=False)
+    prot_model = EsmModel.from_pretrained(PROT_MODEL)
+else:
+    prot_tokenizer = BertTokenizer.from_pretrained(PROT_MODEL, do_lower_case=False)
+    prot_model = BertModel.from_pretrained(PROT_MODEL)
 prot_model.to(device)
 
-BATCH_SIZE = 64
+BATCH_SIZE = 256 # 32
 MAX_PROT_LEN = 1024
 
 save_dir = "../embeddings/"

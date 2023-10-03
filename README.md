@@ -1,3 +1,4 @@
-# dti-capstone-project
+# PGraphDTA
 
-Contains code for all the experiments as a part of the capstone project which deals with drug target interaction.
+Code repository for "Improving Drug Target Interaction Prediction using Protein Language Models and Contact Maps".
+
