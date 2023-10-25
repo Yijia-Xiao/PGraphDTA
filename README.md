@@ -44,3 +44,16 @@ Ensure your data is placed in the appropriate directories and follows the expect
 
 ## Models
 The `models` directory contains pre-trained models and their architecture definitions. You can use these for direct inference or as a starting point for further training.
+
+## Citation
+If you find our repository helpful or used it, please cite our [paper](https://arxiv.org/abs/2310.04017).
+```
+@misc{bal2023pgraphdta,
+      title={PGraphDTA: Improving Drug Target Interaction Prediction using Protein Language Models and Contact Maps}, 
+      author={Rakesh Bal and Yijia Xiao and Wei Wang},
+      year={2023},
+      eprint={2310.04017},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+```
